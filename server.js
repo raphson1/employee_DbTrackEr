@@ -16,15 +16,8 @@ const db = mysql.createConnection(
         database: 'employee_db'
     },
     console.log('server connected to the databases')
-)
-function viewDepartments(){
-    db.query('SELECT * FROM departments', function(err, result){
-        console.log(result)
-        console.log()
-    })
-    editDb()
-}
- 
+);
+
 function editDb(){
     inquirer.prompt([
         {

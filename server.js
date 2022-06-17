@@ -1,12 +1,6 @@
 const mysql = require('mysql2');
 const inquirer = require('inquirer');
-const express = require('express');
-const app = express();
-
-app.use(express.urlencoded({ extended: false }));
-app.use(express.json());
-
-// connect to database
+const cTable = require('console.table');
 
 const db = mysql.createConnection(
     {
@@ -26,10 +20,14 @@ function editDb(){
             message: 'What would you want to do?',
             choices: ['view all departments', 'add a department', 'add a role','add an employee', 'update an employee role']
         }
-    ]).then(response => {
+    ])
+    .then(response => {
         if(response.selection === 'view all departments'){
-            viewDepartments()
+            db.query('SELECT * FROM departement', function(err, result){
+                console.log(result);
+            });
         } else if (response.selection === 'add a department'){
+            
             addDeprtment()
         } else if (response.selection === 'add a role'){
             addRole()
@@ -43,7 +41,6 @@ function editDb(){
 }
 
 editDb()
-
 
 
 

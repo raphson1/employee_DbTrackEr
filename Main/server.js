@@ -9,8 +9,6 @@ const db = mysql.createConnection(
         password: 'Gafunzi29!',
         database: 'employee_db'
     },
-    
-    
 );
 db.connect(function(){
     editDb();
@@ -22,26 +20,37 @@ function editDb(){
         {
             type: 'list',
             name: 'selection',
-            message: 'What would you want to do?',
-            choices: ['view all departments', 'add a department', 'add a role','add an employee', 'update an employee role','view role']
+            message: 'What would you like to do?',
+            choices: [
+                    'view all departments',
+                    'view role',
+                    'view all employies',
+                    'add a department',                 
+                    'add a role',
+                    'add an employee', 
+                    'update employee role'
+                ]
         }
     ])
     .then(response => {
         if(response.selection === 'view all departments'){
             viewDepartment()
+        } else if (response.selection === 'view role'){
+            viewRole()
+        } else if (response.selection === 'view all employies'){
+            viewAllEmployies()
         } else if (response.selection === 'add a department'){
             addDepartment()
         } else if (response.selection === 'add a role'){
             addRole()
-        } else if (response.selection === 'view role'){
-            viewRole()
-        } else if (response.selection === 'add an employee'){
+        } else if (response.selection === 'add employee'){
             addEmployee()
+        } else if (response.selection === 'update employee role'){
+            updateEmployeRole()
         }
     }).catch(err => {
         console.log(err)
     });
-
 };
 
 function viewDepartment(){
@@ -87,14 +96,12 @@ function addRole(){
         {
             type: "input",
             name: "selection",
-            message: "Which department?",
-            
+            message: "Which department?",   
         }
     ]).then(response => {
         db.query('INSERT INTO role (title, Salary, departement_id) VALUES(?,?,?)',
         [response.title, response.salary, response.selection], function(err, result){
             viewRole()
         })
-
     }) 
 }

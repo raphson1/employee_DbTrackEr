@@ -90,6 +90,7 @@ function addDepartment(){
     }) 
 };
 
+
 function addRole(){
     inquirer.prompt([
         {
@@ -131,6 +132,7 @@ function addEmployee(){
             type: "input",
             name: "role",
             message: "which is your role?",
+        
         },
         {
             type: "input",

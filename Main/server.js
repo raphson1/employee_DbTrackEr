@@ -27,9 +27,9 @@ function editDb(){
                     'view all employies',
                     'add a department',                 
                     'add a role',
-                    'add an employee', 
+                    'add employee', 
                     'update employee role'
-                ]
+                    ]
         }
     ])
     .then(response => {
@@ -58,6 +58,22 @@ function viewDepartment(){
         console.table(result);
         editDb()
     });
+};
+
+function viewRole(){
+    db.query('SELECT * FROM role', function(err, result){
+        console.table(result)
+        editDb()
+    })
+};
+
+function viewAllEmployies(){
+    db.query(`SELECT employee.id, employee.first_name AS first_name, employee.last_name AS last_name,
+            role.title AS title, role.Salary AS salary
+            FROM employee LEFT JOIN role ON employee.role_id = role.id;`, function(err, result){
+                console.table(result)
+                editDb()
+            })
 }
 
 function addDepartment(){
@@ -72,13 +88,6 @@ function addDepartment(){
             viewDepartment()
         })
     }) 
-};
-
-function viewRole(){
-    db.query('SELECT * FROM role', function(err, result){
-        console.table(result)
-        editDb()
-    })
 };
 
 function addRole(){
@@ -104,4 +113,35 @@ function addRole(){
             viewRole()
         })
     }) 
-}
+};
+
+function addEmployee(){
+    inquirer.prompt([
+        {
+            type: "input",
+            name: "firstName",
+            message: "Enter the First name of the employee"
+        },
+        {
+            type: "input",
+            name: "lastName",
+            message: "Enter the last name of the employee"
+        },
+        {
+            type: "input",
+            name: "role",
+            message: "which is your role?",
+        },
+        {
+            type: "input",
+            name: "manager",
+            message: "who is your manager",
+           
+        }
+    ]).then(response => {
+        db.query('INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES(?, ?, ?, ?)',
+        [response.firstName, response.lastName, response.role, response.manager], function(err, result){
+            viewAllEmployies()
+        })
+    })
+};

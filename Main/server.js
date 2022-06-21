@@ -1,6 +1,7 @@
 const mysql = require("mysql2");
 const inquirer = require("inquirer");
 const cTable = require("console.table");
+const { clearLine } = require("inquirer/lib/utils/readline");
 
 const db = mysql.createConnection({
   host: "localhost",
@@ -23,7 +24,7 @@ function editDb() {
         choices: [
           "view all departments",
           "view role",
-          "view all employies",
+          "view all employees",
           "add a department",
           "add a role",
           "add employee",
@@ -36,8 +37,8 @@ function editDb() {
         viewDepartment();
       } else if (response.selection === "view role") {
         viewRole();
-      } else if (response.selection === "view all employies") {
-        viewAllEmployies();
+      } else if (response.selection === "view all employees") {
+        viewAllEmployees();
       } else if (response.selection === "add a department") {
         addDepartment();
       } else if (response.selection === "add a role") {
@@ -46,6 +47,8 @@ function editDb() {
         addEmployee();
       } else if (response.selection === "update employee role") {
         updateEmployeRole();
+      } else if (response.selection === "update employee role") {
+        updateEmployeRole()
       }
     })
     .catch((err) => {
@@ -67,7 +70,7 @@ function viewRole() {
   });
 }
 
-function viewAllEmployies() {
+function viewAllEmployees() {
   db.query(
     `SELECT employee.id, employee.first_name AS first_name, employee.last_name AS last_name,
             role.title AS title, role.Salary AS salary, name AS department
@@ -177,7 +180,7 @@ function addEmployee() {
                   response.manager,
                 ],
                 function (err, result) {
-                  viewAllEmployies();
+                  viewAllEmployees();
                 }
               );
             });
@@ -185,4 +188,32 @@ function addEmployee() {
       );
     }
   );
+};
+
+function updateEmployeRole(){
+    db.query("SELECT CONCAT (first_name, ' ', last_name) AS name, id AS value FROM employee", function(err, data){
+        db.query("SELECT title, title AS value FROM  role", function(err, role){
+          
+          inquirer.prompt([
+            {
+              type: "list",
+              name: "selection",
+              message: "Which Employee would you like to update?",
+              choices: data
+            },
+            {
+              type: "list",
+              name: "role",
+              message: "which role do you want to give this employee?",
+              choices: role
+            }
+          ]).then(response => {
+            db.query("UPDATE employee SET role_id = ? WHERE id = ? VALUES(?, ?)",[response.role, response.selection], function(err, result){
+              viewAllEmployees()
+            })
+          })
+      })
+
+    })
+
 }

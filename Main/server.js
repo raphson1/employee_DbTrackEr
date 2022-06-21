@@ -3,6 +3,7 @@ const inquirer = require("inquirer");
 const cTable = require("console.table");
 const { clearLine } = require("inquirer/lib/utils/readline");
 
+//connect server to the database
 const db = mysql.createConnection({
   host: "localhost",
   user: "root",
@@ -62,14 +63,14 @@ function viewDepartment() {
     editDb();
   });
 }
-
+// view all role
 function viewRole() {
   db.query("SELECT * FROM role", function (err, result) {
     console.table(result);
     editDb();
   });
 }
-
+//view all employees
 function viewAllEmployees() {
   db.query(
     `SELECT employee.id, employee.first_name AS first_name, employee.last_name AS last_name,
@@ -81,7 +82,7 @@ function viewAllEmployees() {
     }
   );
 }
-
+//add new department
 function addDepartment() {
   inquirer
     .prompt([
@@ -101,7 +102,7 @@ function addDepartment() {
       );
     });
 }
-
+//add new role
 function addRole() {
   db.query(
     "SELECT name, id AS value FROM departement",
@@ -137,7 +138,7 @@ function addRole() {
     }
   );
 }
-
+// add new employee
 function addEmployee() {
   db.query(
     "SELECT CONCAT(first_name, ' ', last_name) AS name, id AS value FROM employee",
@@ -190,6 +191,7 @@ function addEmployee() {
   );
 };
 
+// update employee role
 function updateEmployeRole(){
     db.query("SELECT CONCAT (first_name, ' ', last_name) AS name, id AS value FROM employee", function(err, data){
         db.query("SELECT title, title AS value FROM  role", function(err, role){
@@ -208,12 +210,10 @@ function updateEmployeRole(){
               choices: role
             }
           ]).then(response => {
-            db.query("UPDATE employee SET role_id = ? WHERE id = ? VALUES(?, ?)",[response.role, response.selection], function(err, result){
+            db.query("UPDATE employee SET role_id = ? WHERE id = ? ",[response.role, response.selection], function(err, result){
               viewAllEmployees()
             })
           })
       })
-
     })
-
 }

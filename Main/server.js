@@ -1,7 +1,6 @@
 const mysql = require("mysql2");
 const inquirer = require("inquirer");
 const cTable = require("console.table");
-const { clearLine } = require("inquirer/lib/utils/readline");
 
 //connect server to the database
 const db = mysql.createConnection({
@@ -193,14 +192,14 @@ function addEmployee() {
 
 // update employee role
 function updateEmployeRole(){
-    db.query("SELECT CONCAT (first_name, ' ', last_name) AS name, id AS value FROM employee", function(err, data){
-        db.query("SELECT title, title AS value FROM  role", function(err, role){
+    db.query("SELECT last_name, last_name AS name, id AS value FROM employee", function(err, data){
+        db.query("SELECT title AS name, id AS value FROM  role", function(err, role){
           
           inquirer.prompt([
             {
               type: "list",
               name: "selection",
-              message: "Which Employee would you like to update?",
+              message: "Whose role would you like to update?",
               choices: data
             },
             {
@@ -210,9 +209,12 @@ function updateEmployeRole(){
               choices: role
             }
           ]).then(response => {
-            db.query("UPDATE employee SET role_id = ? WHERE id = ? ",[response.role, response.selection], function(err, result){
+            db.query("UPDATE employee SET role_id = ? WHERE id = ?",
+              [response.role, response.selection], function(err, result){
               viewAllEmployees()
+    
             })
+            
           })
       })
     })
